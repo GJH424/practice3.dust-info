@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    .warning{
+      color: red;
+    }
+    h1{
+      text-align:center;
+    }
+    ul{
+      margin-left:33%;
+    }
+  </style>
+</head>
+<body>
+  <h1>서울시 미세먼지 현황</h1>
+  <ul id="city-list">
+
+  </ul>
+
+  <script>
+    setInterval(dustInfo(), 900000)
+    function dustInfo(){
+      $.ajax({
+        type: "GET",
+        url: "http://openapi.seoul.go.kr:8088/6d4d776b466c656533356a4b4b5872/json/RealtimeCityAir/1/99",
+        data: {},
+        success: function(response){
+          const cities =  response.RealtimeCityAir.row
+          for (let city of cities){
+            const cityName = city.MSRSTE_NM
+            const pm25 = city.PM25
+            const pm10 = city.PM10
+            if (pm25 >=25) {
+              $("#city-list").append(`
+                <li class="warning">
+                  <strong>${cityName}</strong> <br>미세먼지 수치 ${pm25} / 초미세먼지 수치 ${pm10}
+                </li>
+
+              `)
+
+            } else{
+              $("#city-list").append(`
+                <li>
+                  <strong>${cityName}</strong> <br>미세먼지 수치 ${pm25} / 초미세먼지 수치 ${pm10}
+                </li>
+              `)
+
+            }
+          }
+        }
+
+      })
+    }
+
+  </script>
+</body>
+</html>
